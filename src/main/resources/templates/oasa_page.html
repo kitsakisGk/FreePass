@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Approved Applications</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" media="all" href="style.css">
+</head>
+<body>
+<section class="main-content">
+    <a id="top"></a>
+    <div class="container">
+        <h4>Approved Applications</h4>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn btn--radius-2 btn--blue" type="submit">Sign Out</button>
+        </form>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Citizen</th>
+                <th>Email</th>
+                <th>Duration</th>
+                <th>Generate</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="apCitizen : ${approved_citizens}">
+                <td th:class="${apCitizen.userName}">
+                    <div class="d-flex align-items-center">
+                        <div class="user-info__basic">
+                            <h5 class="mb-0" th:text="${apCitizen.userName}"></h5>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-baseline">
+                        <h5 class="mr-1" th:text="${apCitizen.email}"></h5>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-baseline">
+                        <select id="durations">
+                            <option>1 month</option>
+                            <option>6 months</option>
+                            <option>12 months</option>
+                            <option>24 months</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn--radius-2 btn--blue btn--pill" id="create">Generate Pass</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <form action="#top">
+            <button type="submit">Back to Top</button>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll("#create").forEach(b => {
+        b.addEventListener("click", e => {
+            let select = b.parentNode.parentNode.childNodes[5].firstElementChild.firstElementChild;
+            let pass_code= '';
+            let characters= 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for ( let i = 0; i < 12; i++ ) {
+                pass_code += characters.charAt(Math.floor(Math.random() *
+                    characters.length));
+            }
+
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            const options = {
+                method: `PUT`,
+                headers: myHeaders,
+                body: pass_code+"-"+select.options[select.selectedIndex].value
+            };
+
+
+
+            fetch(window.location.href +"/enableCitizenPass/"+ b.parentNode.parentNode.firstElementChild.classList[0] + " " +  b.parentNode.parentNode.firstElementChild.classList[1],options).then(data => {
+                if (!data.ok) {
+                    throw data;
+                }else{
+                    b.parentNode.parentNode.parentNode.removeChild(b.parentNode.parentNode);
+                    for ( let i = 0; i < 12; i++ ) {
+                        pass_code += characters.charAt(Math.floor(Math.random() *
+                            characters.length));
+                    }
+                }
+            });
+        });
+
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
