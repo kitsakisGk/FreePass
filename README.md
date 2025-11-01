@@ -1,87 +1,106 @@
-**HOW TO RUN**
+# FreePass
 
-Χρειαζεται να εχετε εγκατεστημενη την MySQL και να εχετε ενα ενεργο schema. Για να αναγνωριζει η εφαρμογη το schema σας
-πηγαινετε στο application.properties αρχειο και αλλαζετε τις μεταβλητες αναλογα με τα στοιχεια της βασης σας.
-Επειτε απλα πατατε run και η εφαρμογη τρεχει στo port 8080.
+<div align="center">
 
-**USER MANUAL**
+## Free Public Transportation Pass Management System
 
-CITIZEN : Κάνετε εγγραφή στην σελίδα /register και έπειτα κάνετε login με το ονοματεπώνυμο και τον κωδικό σας. Όταν μπείτε στο profile σας το μόνο που μένει να κάνετε είναι να πατήσετε submit application, όταν έχει παρθεί απόφαση για την αίτηση σας τότε θα δείτε ένα ACCEPTED ή REJECTED στο profile σας. 
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Java](https://img.shields.io/badge/Java-17-007396?style=for-the-badge&logo=java&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-Template%20Engine-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white)
 
-OAED : Με το προ-φτιαγμένο profile σας κάνετε login στο /oaed και έπειτα μπορείτε να δείτε την λίστα των αιτήσεων απο τους διάφορους πολίτες. Εκεί μπορείται να αποφασίσετε αν θα κάνετε accept ή reject την αίτηση πατώντας το ανάλογο κουμπί.
+**Author:** Georgios Kitsakis
 
-OASA : Με το προ-φτιαγμένο profile σας κάνετε login στο /oasa και έπειτα βλέπετε την λιστα των αποδεχόμενων αιτήσεων . Μπορείτε να ορίσετε την διάρκεια του πάσου και έπειτα να εκδόσετε το πάσο πατώντας generate.
+</div>
 
-ADMIN : Κάνετε login στο /admin και αφου έχετε παραλάβει email αίτησης είτε από το ίδρυμα του ΟΑΣΑ είτε από το ίδρυμα του ΟΑΕΔ τότε φτιάχνετε έναν λογαριασμό ανάλογα με τις απαιτήσεις του email γεμίζοντας τα user-name και password πεδία και πατώντας το κατάλληλο κουμπί.
+---
 
+## Overview
 
-**API DOCUMENTATION**
+FreePass is a full-stack web application for managing free public transportation passes for unemployed citizens. The system connects citizens, OAED (Employment Organization) employees, and OASA (Public Transport) staff through a secure, role-based platform.
 
-## 1.
+## Features
 
-path="/saveApplication" , Method=POST , authentication=CITIZEN_ROLE
+### Multi-Role System
 
- 
+**Citizens:**
+- Register and submit applications
+- View application status (Waiting/Accepted/Rejected)
 
-    Headers: Content-Type", "application/json"
-    Body: {
-              "userName": full_name,
-              "ssn":ssn,
-              "unemployedSince" : unemployed
-           }
+**OAED Employees:**
+- Review applications
+- Approve or reject requests
 
-*Description*:
-Ο πολιτης καλει το API για να εκτελεσει την αιτηση του.
-Επιτρεπεται μονο μια αιτηση ανα χρηστη και το API δεν επιτρεπει duplicates.
-Για status_code = 400 σημαινει οτι εντοπιστηκε duplicate.
+**OASA Staff:**
+- View approved applications
+- Generate transportation passes
 
+**Administrators:**
+- Create employee accounts
+- Manage system users
 
-## 2.
+## Tech Stack
 
-path="/saveCitizen", Method=POST, authentication=ALL
+- **Spring Boot 2.7** - Backend framework
+- **Spring Data JPA** - Database abstraction
+- **Spring Security** - Authentication & authorization
+- **MySQL 8.0** - Database
+- **Thymeleaf** - Template engine
+- **Maven** - Build tool
 
-    Headers: Content-Type", "application/json"
+## Installation
 
-    Body:{
-             "userName": first_name + " " + last_name,
-             "ssn":ssn,
-             "email": email,
-             "status":"waiting",
-             "phoneNumber": phone,
-             "unemployedSince" : date
-          }
+### Prerequisites
+- Java 17+
+- MySQL 8.0+
+- Maven 3.6+
 
-*Description*:
-Χρησιμοποιειται απο τους πολιτες για να αποθηκεύσει τα στοιχεια του στην βαση μας.
-Αυτο το api καλειται σε συνδυασμο με το /saveUser 
-και δεν θα επρεπε να καλεστει αν το response του saveUser ειναι status code 400.
+### Setup
 
+1. Clone repository
+2. Create MySQL database
+3. Configure database connection in application.properties
+4. Run application on port 8080
 
-## 3.
+## User Workflows
 
-path="/updateCitizen/{user_name}" , Method=PUT , authentication=OAED_ROLE
+### Citizens
+1. Register at /register
+2. Login and submit application
+3. Check status on profile page
 
-    Headers: Content-Type", "application/json"
-    Βοdy:"waiting"/"accepted"/"rejected"
+### OAED
+1. Login at /oaed
+2. Review applications
+3. Accept or reject requests
 
-*Description*:
-Καλειται απο τον υπαλληλο ΟΑΕΔ για να επικυρωσει την αποφαση για την αιτηση ενος πολιτη.
-Δεχεται ως παραμετρο το username του πολιτη που θελουμε να τροποποιησουμε,
-αναγκαστικα πρεπει να δεχεται μια απο τις τιμες waiting/accepted/rejected
+### OASA
+1. Login at /oasa
+2. View approved applications
+3. Set duration and generate passes
 
-## 4.
+### Admin
+1. Login at /admin
+2. Create OAED/OASA accounts
 
-path="/saveUser" , Method=POST authentication=ALL
+## API Endpoints
 
-    Headers: Content-Type", "application/json"
-    Body:{
-            "userName": user_name,
-            "password": password,
-            "roles": role,
-         }
+All endpoints documented in original Greek README. Key endpoints include saving applications, updating status, and managing users with role-based access control.
 
-*Description*:
-Μπορει να χρησιμοποιηθει απο τον πολιτη για την δημιουργια λογαριασμου πολιτη και επισης μπορει
-ο μοναδικος admin του συστηματος να προσθεσει oaed/oasa λογαριασμο στο συστημα
-Επιτρεπεται μονο ενας χρηστης ανα ονομα και το API δεν επιτρεπει duplicates.
-Για status_code = 400 σημαινει οτι εντοπιστηκε duplicate.
+## Security
+
+- BCrypt password encryption
+- Role-based access control
+- CSRF protection
+- Session management
+
+## Contact
+
+**Georgios Kitsakis**
+- Email: kitsakisgk@gmail.com
+- GitHub: @kitsakisGk
+- LinkedIn: Georgios Kitsakis
+
+---
+
+Built with Spring Boot demonstrating enterprise Java development skills
